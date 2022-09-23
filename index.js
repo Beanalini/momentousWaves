@@ -3,7 +3,7 @@ const inquirer = require("inquirer");
 const mysql = require('mysql2');
 const conTable = require('console.table');
 const logo = require('asciiart-logo');
-const { ADDRGETNETWORKPARAMS } = require("dns");
+
 
 
 // establish  connection to database
@@ -97,16 +97,16 @@ const db = mysql.createConnection({
 
 const getchoices = () => {
     db.query('SELECT * FROM department', function (err, res) {
-        if(err) throw err;
-              
+        if(err) throw err;              
         const choice = res.map(a =>a.names);
-        console.log(choice);
+        //console.log(choice);
         return choice;
-
-    }); 
-
-
+    
+    })
+    
 }
+
+
 
 const addRole = () => {
 
@@ -167,13 +167,7 @@ const addDep = () => {
             viewDepartments();
     
         });   
-
-
-
-
     })
-
-
 }
 
 
