@@ -1,0 +1,31 @@
+{
+  "name": "employee_tracker",
+  "version": "1.0.0",
+  "description": "command line application to manage a company's employee database",
+  "main": "index.js",
+  "scripts": {
+    "test": "\"echo \\\"Error: no test specified\\\" && exit 1\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Beanalini/momentousWaves.git"
+  },
+  "keywords": [
+    "CMS",
+    "database",
+    "CLI"
+  ],
+  "author": "Debra Constantinou",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Beanalini/momentousWaves/issues"
+  },
+  "homepage": "https://github.com/Beanalini/momentousWaves#readme",
+  "dependencies": {
+    "ascii-art": "^2.8.5",
+    "asciiart-logo": "^0.2.7",
+    "console.table": "^0.10.0",
+    "inquirer": "^8.2.4",
+    "mysql2": "^2.3.3"
+  }
+}
