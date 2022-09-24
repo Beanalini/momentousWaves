@@ -60,8 +60,7 @@ const db = mysql.createConnection({
                 "Add a department",
                 "Add a role",
                 "Add an employee",
-                "Update an employee role"             
-
+                "Update an employee role"    
             ]    
         },
         
@@ -88,6 +87,10 @@ const db = mysql.createConnection({
                 break;    
             case "Add an employee":
                 addEmp();
+            
+                break;
+            case "Update an employee role":
+                updateEmp();
             
             break;
         }
@@ -145,7 +148,7 @@ const addEmp = () => {
         if(err) throw err;
                    
         
-        inquirer.prompt([
+        return inquirer.prompt([
             {
                 type: "input",
                 name: "first_name",
@@ -173,7 +176,7 @@ const addEmp = () => {
             db.query('SELECT * FROM employees', function (err, res) {
                 if(err) throw err;
                 
-                inquirer.prompt([
+            return inquirer.prompt([
                     {
                         type: "list",
                         name: "man_name",
@@ -196,13 +199,77 @@ const addEmp = () => {
                 })
             })      
         })    
-    })    
+    })  
+    userMainMenu();  
+}
+
+const updateEmp = () => {
+
+    let f_name;  
+    let l_name;
+    let emp_id;
+    let j_id;
+    console.log("inside updateEmp()");
+    db.query('SELECT * FROM employees', function (err, res) {
+        if(err) throw err;
+                   
+        
+        return inquirer.prompt([
+            {
+                type: "list",
+                name: "emp_name",
+                message: "Which employee's role do you want to update?", 
+                choices: res.map(a =>a.first_name.concat( ' ', a.last_name)),
+                default: "none"
+            }
+
+            
+        ]).then((response) => {
+
+            const choice = res.filter(x => (x.first_name.concat( ' ', x.last_name) == response.emp_name));
+                 
+            //choice = res.filter(x => x.title == response.job_title);
+            emp_id = choice[0].id
+            f_name = choice[0].first_name;  
+            l_name = choice[0].last_name;
+
+
+            //call db to get role data
+            db.query('SELECT * FROM roles', function (err, res) {
+                if(err) throw err;
+                
+                inquirer.prompt([
+                    {
+                        type: "list",
+                        name: "new_role",
+                        message: "Please select the new role you want to assign to the selected employee:", 
+                        choices: res.map(a =>a.title),
+                        default: "none"
+                }
+                ]).then((response) => {
+                    console.log(`New role selected is ${response.new_role}`)
+                    const choice = res.filter(x => x.title == response.new_role);
+                    j_id = choice[0].id
+                    console.log(`UPDATE employees SET role_id = ${parseInt(j_id)} WHERE id = ${parseInt(emp_id)}`);
+                    db.query(`UPDATE employees SET role_id = ${parseInt(j_id)} WHERE id = ${parseInt(emp_id)}`, function (err, res) {
+                        if(err) throw err;
+                        console.log(`${f_name} ${l_name} role has been updated to ${response.new_role}`);
+                        console.log(`UPDATE employees SET role_id = ${parseInt(j_id)} WHERE id = ${parseInt(emp_id)}`);
+
+                        
+                
+                    });  
+                })
+            })      
+        })    
+    })   
+
 }
 
 const addDep = () => {
 
         //Prompt User for department name
-        return inquirer.prompt([
+       return inquirer.prompt([
         {
             type: "input",
             name: "depName",
@@ -218,6 +285,7 @@ const addDep = () => {
     
         });   
     })
+    
 }
 
 
