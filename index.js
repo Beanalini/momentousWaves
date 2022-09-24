@@ -95,59 +95,109 @@ const db = mysql.createConnection({
     })
 }
 
-const getchoices = () => {
+const addRole = () => {
     db.query('SELECT * FROM department', function (err, res) {
         if(err) throw err;              
-        const choice = res.map(a =>a.names);
-        //console.log(choice);
-        return choice;
+        
+        return inquirer.prompt([
+            {
+                type: "input",
+                name: "title",
+                message: "Please enter title of the new role",            
+            },
+            {
+                type: "input",
+                name: "salary",
+                message: "Please enter the salary for the new role",            
+            },
+            {
+                type: "list",
+                name: "department",
+                message: "Please select the department the new role belongs to", 
+                choices: res.map(a =>a.names)
+            }
+        ]).then((response) => {
+            //extract department id
+            //const choice = res.find(x=> x.id===response.department);
+            const choice = res.filter(x => x.names == response.department);
+            //console.log(res);
+            //console.log(choice[0].id);
+            //console.log(response);
+           db.query(`INSERT INTO roles (title, salary, department_id) VALUES ("${response.title}", ${response.salary}, ${choice[0].id})`, function (err, res) {
+                if(err) throw err;
+                console.log(`The new ${response.title} role has been added to the database`);
+                viewDepartments();
+        
+            });   
+    
+        })
     
     })
     
 }
 
+const addEmp = () => {
+    let f_name;  
+    let l_name;
+    let j_id;
+    let man_id;  
+    db.query('SELECT * FROM roles', function (err, res) {
+        if(err) throw err;
+                   
+        
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "first_name",
+                message: "Please enter the employee's first name",            
+            },
+            {
+                type: "input",
+                name: "last_name",
+                message: "Please enter the employee's last name",            
+            },
+            {
+                type: "list",
+                name: "job_title",
+                message: "Please select the employee's job title", 
+                choices: res.map(a =>a.title)
+            }
+        ]).then((response) => {
+            f_name = response.first_name;  
+            l_name = response.last_name;          
+            choice = res.filter(x => x.title == response.job_title);
+            j_id = choice[0].id
 
 
-const addRole = () => {
-
-    return inquirer.prompt([
-        {
-            type: "input",
-            name: "title",
-            message: "Please enter title of the new role",            
-        },
-        {
-            type: "input",
-            name: "title",
-            message: "Please enter the salary for the new role",            
-        },
-        {
-            type: "input",
-            name: "department",
-            message: "Please select the department the new role belongs to", 
-            choices: getchoices(),           
-        }
-
-    ]).then((response) => {
-        db.query(`INSERT INTO roles (title, salary, department_id) VALUES ("${response.depName}")`, function (err, res) {
-            if(err) throw err;
-            console.log(`${response.depName} has been added to the database`);
-            viewDepartments();
-    
-        });   
-
-
-
-
-    })
-
-
-
-
-
-
+            //call db to get employee data
+            db.query('SELECT * FROM employees', function (err, res) {
+                if(err) throw err;
+                
+                inquirer.prompt([
+                    {
+                        type: "list",
+                        name: "man_name",
+                        message: "Please select the employee's manager:", 
+                        choices: res.map(a =>a.first_name.concat( ' ', a.last_name)),
+                        default: "none"
+                }
+                ]).then((response) => {
+                    console.log(`Manager selected is ${response.man_name}`)
+                    //get the manager id from the employee table
+                    const manID = res.filter(x => (x.first_name.concat( ' ', x.last_name) == response.man_name));
+                    man_id = manID[0].id;
+                    
+                    db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("${f_name}", "${l_name}", ${parseInt(j_id)}, ${parseInt(man_id)})`, function (err, res) {
+                        if(err) throw err;
+                        console.log(`${f_name} ${l_name} has been added as a new employee`);
+                        viewDepartments();
+                
+                    });  
+                })
+            })      
+        })    
+    })    
 }
-
 
 const addDep = () => {
 
@@ -200,13 +250,17 @@ const viewStaff = () => {
 
     //const search = `SELECT * FROM department`;
 
-    const search = `SELECT employees.id, employees.first_name, employees.last_name, roles.title, department.names 
-    AS department, roles.salary, employees.manager_id   
+    const search = `
+    
+    SELECT employees.id, employees.first_name, employees.last_name, roles.title, department.names 
+    AS department, roles.salary, employees.manager_id, employees.manager_name 
     FROM employees
     JOIN roles ON roles.id = employees.role_id
     JOIN department on roles.department_id = department.id
-    ORDER BY employees.id` ;
+    ORDER BY employees.id;`;
 
+
+    //select employees.firstname + ' ' + employees.lastname AS managername 
     db.query(search, function (err, res) {
         if(err) throw err;
         console.table(res);
