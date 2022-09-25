@@ -57,10 +57,14 @@ const db = mysql.createConnection({
                 "View all departments",
                 "View all roles",
                 "View all employees",
+                "View Employees by department",
                 "Add a department",
                 "Add a role",
                 "Add an employee",
-                "Update an employee role"    
+                "Update an employee role",
+                "View utilised budget by department"
+
+                
             ]    
         },
         
@@ -91,6 +95,14 @@ const db = mysql.createConnection({
                 break;
             case "Update an employee role":
                 updateEmp();
+            
+            break;
+            case "View Employees by department":
+                viewEmpDep();
+            
+            break;
+            case "View utilised budget by department":
+                viewDepbudget();
             
             break;
         }
@@ -138,6 +150,88 @@ const addRole = () => {
     })
     
 }
+
+
+
+
+const viewEmpDep = () => {
+
+    db.query('SELECT * FROM department', function (err, res) {
+        if(err) throw err;              
+        
+        return inquirer.prompt([
+            
+            {
+                type: "list",
+                name: "department",
+                message: "Please select the department  you want to view the employees in:", 
+                choices: res.map(a =>a.names)
+            }
+        ]).then((response) => {
+            
+            const choice = res.filter(x => x.names == response.department);
+            
+           db.query(`SELECT DISTINCT employees.first_name, employees.last_name, roles.title, roles.salary, department.names AS department
+            FROM employees
+            JOIN
+            (roles 
+            JOIN department 
+            ON department.id = roles.department_id)
+            ON employees.role_id = roles.id
+            WHERE department_id = ${parseInt(choice[0].id)};`, function (err, res) {         
+               
+                if(err) throw err;
+                console.table(res);
+                userMainMenu();
+        
+            });   
+    
+        })
+    
+    })
+
+}
+
+const viewDepbudget = () => {
+
+    db.query('SELECT * FROM department', function (err, res) {
+        if(err) throw err;              
+        
+        return inquirer.prompt([
+            
+            {
+                type: "list",
+                name: "department",
+                message: "Please select the department's utilised budget you want to view:", 
+                choices: res.map(a =>a.names)
+            }
+        ]).then((response) => {
+            
+            const choice = res.filter(x => x.names == response.department);
+            
+           db.query(`SELECT DISTINCT SUM(roles.salary) AS budget, department.names AS department
+            FROM employees
+            JOIN
+            (roles 
+            JOIN department 
+            ON department.id = roles.department_id)
+            ON employees.role_id = roles.id
+            WHERE department_id = ${parseInt(choice[0].id)};`, function (err, res) {         
+               
+                if(err) throw err;
+                console.table(res);
+                userMainMenu();
+        
+            });   
+    
+        })
+    
+    })
+
+}
+
+
+
 
 const addEmp = () => {
     let f_name;  
