@@ -200,7 +200,7 @@ const addEmp = () => {
             })      
         })    
     })  
-    userMainMenu();  
+    
 }
 
 const updateEmp = () => {
@@ -238,7 +238,7 @@ const updateEmp = () => {
             db.query('SELECT * FROM roles', function (err, res) {
                 if(err) throw err;
                 
-                inquirer.prompt([
+                return inquirer.prompt([
                     {
                         type: "list",
                         name: "new_role",
@@ -254,16 +254,15 @@ const updateEmp = () => {
                     db.query(`UPDATE employees SET role_id = ${parseInt(j_id)} WHERE id = ${parseInt(emp_id)}`, function (err, res) {
                         if(err) throw err;
                         console.log(`${f_name} ${l_name} role has been updated to ${response.new_role}`);
-                        console.log(`UPDATE employees SET role_id = ${parseInt(j_id)} WHERE id = ${parseInt(emp_id)}`);
-
-                        
+                        console.log(`UPDATE employees SET role_id = ${parseInt(j_id)} WHERE id = ${parseInt(emp_id)}`);     
+                        userMainMenu();                  
                 
                     });  
                 })
             })      
         })    
     })   
-
+      
 }
 
 const addDep = () => {
@@ -281,7 +280,7 @@ const addDep = () => {
         db.query(`INSERT INTO department (names) VALUES ("${response.depName}")`, function (err, res) {
             if(err) throw err;
             console.log(`${response.depName} has been added to the database`);
-            viewDepartments();
+           // viewDepartments();
     
         });   
     })
@@ -300,7 +299,7 @@ const viewDepartments = () => {
         userMainMenu();
         
 
-    });   
+    }); 
 }
 
 const viewRoles= () => {
