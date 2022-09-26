@@ -29,7 +29,7 @@ const db = mysql.createConnection({
         logo({
             name: 'Employee Tracking System',
             font: 'Speed',
-            lineChars: 10,
+            lineChars: 15,
             padding: 2,
             margin: 3,
             borderColor: 'grey',
@@ -62,7 +62,8 @@ const db = mysql.createConnection({
                 "Add a role",
                 "Add an employee",
                 "Update an employee role",
-                "View utilised budget by department"
+                "View utilised budget by department",
+                "End this session"
 
                 
             ]    
@@ -103,6 +104,10 @@ const db = mysql.createConnection({
             break;
             case "View utilised budget by department":
                 viewDepbudget();
+            
+            break;
+            case "End this session":
+                endSession();
             
             break;
         }
@@ -411,14 +416,12 @@ const viewStaff = () => {
 
     //const search = `SELECT * FROM department`;
 
-    const search = `
-    
-    SELECT employees.id, employees.first_name, employees.last_name, roles.title, department.names 
-    AS department, roles.salary, employees.manager_id, employees.manager_name 
-    FROM employees
-    JOIN roles ON roles.id = employees.role_id
-    JOIN department on roles.department_id = department.id
-    ORDER BY employees.id;`;
+    const search = ` SELECT employees.id, employees.first_name, employees.last_name, roles.title, department.names AS department,  roles.salary, 
+                    CONCAT (manager.first_name, " ", manager.last_name) AS manager
+                    FROM employees
+                    LEFT JOIN roles ON employees.role_id = roles.id
+                    LEFT JOIN department ON roles.department_id = department.id
+                    LEFT JOIN employees manager ON employees.manager_id = manager.id;`;
 
 
     //select employees.firstname + ' ' + employees.lastname AS managername 
@@ -428,6 +431,31 @@ const viewStaff = () => {
         userMainMenu();
 
     });
+}
+
+const endSession = () => {
+//Close connection with server
+    db.end()
+
+ console.log(
+    logo({
+        name: 'Session Ended Good Bye!',
+        font: 'Speed',
+        lineChars: 15,
+        padding: 2,
+        margin: 3,
+        borderColor: 'grey',
+        logoColor: 'bold-green',
+        textColor: 'green',
+    })
+    .emptyLine()
+    .right('version 2.7')
+    .emptyLine()
+    //.center(longText)
+    .render()
+);
+
+
 }
 
   //This function initialises the team profile generator

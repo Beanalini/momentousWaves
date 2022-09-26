@@ -85,5 +85,5 @@ VALUES
 ("Huan", "Lortz", 32, 31),
 ("Pradeep", "Makrucki", 33, 31);
 
-ALTER TABLE employees ADD manager_name VARCHAR(50);
-UPDATE employees SET manager_name = first_name + last_name;
+ALTER TABLE  employees ADD manager_name VARCHAR(50)
+UPDATE employees SET employees.manager_name = CONCAT(employees.first_name +  employees.last_name);
