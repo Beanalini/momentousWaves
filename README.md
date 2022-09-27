@@ -91,9 +91,9 @@ THEN I am prompted to select an employee to update and their new role and this i
 
   ## Walk Through Video
 
-   A  walk-through video demonstrating the functionality of the Employee Tracker Application is shown below:
+   Click on the link below to view a walk-through video demonstrating the functionality of the Employee Tracker Application.
 
-   - [Employee Tracker walk-through video](https://watch.screencastify.com/v/ZZcYv8i3gv1w52DnPjB3)
+   - [Link to Employee Tracker walk-through video](https://watch.screencastify.com/v/ZZcYv8i3gv1w52DnPjB3)
 
    
 
