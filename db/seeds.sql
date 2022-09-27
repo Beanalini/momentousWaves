@@ -16,7 +16,7 @@ INSERT INTO roles (title, salary, department_id)
 VALUES 
 
 ("Technical Lead", 120000, 1),
-("Technical spealist" ,130000, 1),
+("Technical specialist" ,130000, 1),
 ("Principal Engineer" , 85000, 1),
 ("Consultant", 70000, 1),
 ("Engineer", 40000, 1),
@@ -24,7 +24,7 @@ VALUES
 ("Admin assistant",25000, 1),
 
 ("Chief Engineer", 110000, 2),
-("Technical spealist", 100000, 2),
+("Technical specialist", 100000, 2),
 ("Principal Engineer",90000, 2),
 ("Engineer", 35000, 2),
 ("Software Engineer", 80000 ,2),

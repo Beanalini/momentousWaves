@@ -123,17 +123,17 @@ const addRole = () => {
             {
                 type: "input",
                 name: "title",
-                message: "Please enter title of the new role",            
+                message: "Please enter title of the new role:",            
             },
             {
                 type: "input",
                 name: "salary",
-                message: "Please enter the salary for the new role",            
+                message: "Please enter the salary for the new role:",            
             },
             {
                 type: "list",
                 name: "department",
-                message: "Please select the department the new role belongs to", 
+                message: "Please select the department the new role belongs to:", 
                 choices: res.map(a =>a.names)
             }
         ]).then((response) => {
@@ -143,7 +143,9 @@ const addRole = () => {
            
            db.query(`INSERT INTO roles (title, salary, department_id) VALUES ("${response.title}", ${response.salary}, ${choice[0].id})`, function (err, res) {
                 if(err) throw err;
+                console.log("\n");
                 console.log(`\u001B[33m The new ${response.title} role has been added to the database \u001B[0m`);
+                console.log("\n");
                 userMainMenu();  
         
             });   
@@ -253,17 +255,17 @@ const addEmp = () => {
             {
                 type: "input",
                 name: "first_name",
-                message: "Please enter the employee's first name",            
+                message: "Please enter the employee's first name:",            
             },
             {
                 type: "input",
                 name: "last_name",
-                message: "Please enter the employee's last name",            
+                message: "Please enter the employee's last name:",            
             },
             {
                 type: "list",
                 name: "job_title",
-                message: "Please select the employee's job title", 
+                message: "Please select the employee's job title:", 
                 choices: res.map(a =>a.title)
             }
         ]).then((response) => {
@@ -281,10 +283,9 @@ const addEmp = () => {
                 const manArr = res.map(a =>a.first_name.concat( ' ', a.last_name));
                 //Add none as a selection option - indicates employee has no manager
                 const manOptions = ["None",...manArr];
-                console.log(manOptions);
+                         
                 
-                
-            return inquirer.prompt([
+                inquirer.prompt([
                     {
                         type: "list",
                         name: "man_name",
@@ -327,10 +328,6 @@ const addEmp = () => {
                         userMainMenu();  
 
                         })
-
-
-
-
                 })
             })      
         })    
@@ -349,7 +346,7 @@ const updateEmp = () => {
         if(err) throw err;
                    
         
-        return inquirer.prompt([
+        inquirer.prompt([
             {
                 type: "list",
                 name: "emp_name",
@@ -373,7 +370,7 @@ const updateEmp = () => {
             db.query('SELECT * FROM roles', function (err, res) {
                 if(err) throw err;
                 
-                return inquirer.prompt([
+                 inquirer.prompt([
                     {
                         type: "list",
                         name: "new_role",
