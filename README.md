@@ -1,4 +1,4 @@
-# Employee TRacker [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  
+# Employee Tracker [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  
   
   ## Table of Contents  
   * [Description](#description)
@@ -14,13 +14,12 @@
   
   ## Description
 
-  The motivation behind this project is to create an application that allows non-devlopers to eaily view and interact with information stored in a database.  The application is 
-  The main development aim of this project was to build a command-line application that can be used to manage a company's employee database using Node.j, Inquirer and MySQL.
+  The motivation behind this project was to create an application that allows non-devlopers to eaily view and interact with information stored in a database.  The main development aim of this project was to build a command-line application that can be used to manage a company's employee database using NodeJS, Inquirer and MySQL.
 
     
   ### Functional Requirements
 
-  The functional requirements that the Employee TRacker application has been designed to meet are defined by the user story and acceptance criteria listed below.  
+  The functional requirements that the Employee Tracker application has been designed to meet, are defined by the user story and acceptance criteria listed below.  
 
   #### User Story
 
@@ -107,7 +106,7 @@ THEN I am prompted to select an employee to update and their new role and this i
 
   The following screen shot below displays the employees, deperatment utlised budget and employees by selected department tables.
 
-  ![Note Taker page](./assets/images/viewEmp.png)
+  ![database tables](./assets/images/viewEmp.png)
   
 
 
