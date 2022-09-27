@@ -42,7 +42,7 @@ const db = mysql.createConnection({
         //.center(longText)
         .render()
     );
-        //Start db interaction 
+         
         init();
 
   }) 
@@ -138,15 +138,13 @@ const addRole = () => {
             }
         ]).then((response) => {
             //extract department id
-            //const choice = res.find(x=> x.id===response.department);
+           
             const choice = res.filter(x => x.names == response.department);
-            //console.log(res);
-            //console.log(choice[0].id);
-            //console.log(response);
+           
            db.query(`INSERT INTO roles (title, salary, department_id) VALUES ("${response.title}", ${response.salary}, ${choice[0].id})`, function (err, res) {
                 if(err) throw err;
-                console.log(`The new ${response.title} role has been added to the database`);
-                viewDepartments();
+                console.log(`\u001B[33m The new ${response.title} role has been added to the database \u001B[0m`);
+                userMainMenu();  
         
             });   
     
@@ -164,12 +162,12 @@ const viewEmpDep = () => {
     db.query('SELECT * FROM department', function (err, res) {
         if(err) throw err;              
         
-        return inquirer.prompt([
+        inquirer.prompt([
             
             {
                 type: "list",
                 name: "department",
-                message: "Please select the department  you want to view the employees in:", 
+                message: "Please select the department to view its employees:", 
                 choices: res.map(a =>a.names)
             }
         ]).then((response) => {
@@ -186,7 +184,9 @@ const viewEmpDep = () => {
             WHERE department_id = ${parseInt(choice[0].id)};`, function (err, res) {         
                
                 if(err) throw err;
+                console.log("\n")
                 console.table(res);
+                console.log("\n")
                 userMainMenu();
         
             });   
@@ -202,7 +202,7 @@ const viewDepbudget = () => {
     db.query('SELECT * FROM department', function (err, res) {
         if(err) throw err;              
         
-        return inquirer.prompt([
+        inquirer.prompt([
             
             {
                 type: "list",
@@ -224,7 +224,9 @@ const viewDepbudget = () => {
             WHERE department_id = ${parseInt(choice[0].id)};`, function (err, res) {         
                
                 if(err) throw err;
+                console.log("\n")
                 console.table(res);
+                console.log("\n")
                 userMainMenu();
         
             });   
@@ -274,27 +276,61 @@ const addEmp = () => {
             //call db to get employee data
             db.query('SELECT * FROM employees', function (err, res) {
                 if(err) throw err;
+
+                //create manager name array for user selection options 
+                const manArr = res.map(a =>a.first_name.concat( ' ', a.last_name));
+                //Add none as a selection option - indicates employee has no manager
+                const manOptions = ["None",...manArr];
+                console.log(manOptions);
+                
                 
             return inquirer.prompt([
                     {
                         type: "list",
                         name: "man_name",
                         message: "Please select the employee's manager:", 
-                        choices: res.map(a =>a.first_name.concat( ' ', a.last_name)),
-                        default: "none"
+                        choices: manOptions,
+                       
                 }
                 ]).then((response) => {
                     console.log(`Manager selected is ${response.man_name}`)
-                    //get the manager id from the employee table
-                    const manID = res.filter(x => (x.first_name.concat( ' ', x.last_name) == response.man_name));
-                    man_id = manID[0].id;
+                    //find the manager id using  the selected employee's name and assign this to  mananger_id in the employee table
+                    let man_id;
+                    if(response.man_name == "None") {
+                        man_id = null;
+
+                        
+                    } else {
+
+                        const manID = res.filter(x => (x.first_name.concat( ' ', x.last_name) == response.man_name));
+                         man_id = manID[0].id;
+                    }
+                    console.log(man_id);
                     
-                    db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("${f_name}", "${l_name}", ${parseInt(j_id)}, ${parseInt(man_id)})`, function (err, res) {
-                        if(err) throw err;
-                        console.log(`${f_name} ${l_name} has been added as a new employee`);
-                        viewDepartments();
-                
-                    });  
+                    //use the SET syntax instead to avoid integer parsing problems when manager is selected as "none"
+                    db.query(
+                        'INSERT INTO employees SET ?',
+                        {
+                            first_name: f_name,
+                            last_name: l_name,
+                            role_id: j_id,
+                            manager_id: man_id
+                        },
+                        (err) => {
+                            
+                        if (err) throw err;
+                        //render new employee seucess message
+                        console.log("\n");
+                        console.log(`\u001B[33m ${f_name} ${l_name} has been added as a new employee with manager ${response.man_name} \u001B[0m`);
+                        console.log("\n");
+                        //display user main prompt menu
+                        userMainMenu();  
+
+                        })
+
+
+
+
                 })
             })      
         })    
@@ -346,15 +382,18 @@ const updateEmp = () => {
                         default: "none"
                 }
                 ]).then((response) => {
-                    console.log(`New role selected is ${response.new_role}`)
+                    //find the id of the new role from the user selected title and assign it to role_id
                     const choice = res.filter(x => x.title == response.new_role);
                     j_id = choice[0].id
-                    console.log(`UPDATE employees SET role_id = ${parseInt(j_id)} WHERE id = ${parseInt(emp_id)}`);
+                    
                     db.query(`UPDATE employees SET role_id = ${parseInt(j_id)} WHERE id = ${parseInt(emp_id)}`, function (err, res) {
                         if(err) throw err;
-                        console.log(`${f_name} ${l_name} role has been updated to ${response.new_role}`);
-                        console.log(`UPDATE employees SET role_id = ${parseInt(j_id)} WHERE id = ${parseInt(emp_id)}`);     
-                        userMainMenu();                  
+                        //render role success update message
+                        console.log("\n"); 
+                        console.log(`\u001B[33m ${f_name} ${l_name} role has been updated to ${response.new_role} \u001B[0m`);
+                        console.log("\n");     
+                        //display usermain prompt menu
+                        userMainMenu();   
                 
                     });  
                 })
@@ -367,19 +406,25 @@ const updateEmp = () => {
 const addDep = () => {
 
         //Prompt User for department name
-       return inquirer.prompt([
+       inquirer.prompt([
         {
             type: "input",
             name: "depName",
-            message: "Please enter the department's name",
+            message: "Please enter the department's name:",
             
         }
 
     ]).then((response) => {
         db.query(`INSERT INTO department (names) VALUES ("${response.depName}")`, function (err, res) {
             if(err) throw err;
-            console.log(`${response.depName} has been added to the database`);
-           // viewDepartments();
+            
+            //render user success message
+            console.log("\n")
+            console.log(`\u001B[33m ${response.depName} department has been added to the database \u001B[0m`);
+            console.log("\n")
+           
+           //display user main  prompt menu
+           userMainMenu();  
     
         });   
     })
@@ -393,10 +438,12 @@ const viewDepartments = () => {
     //const search = `SELECT * FROM department`;
     db.query('SELECT * FROM department', function (err, res) {
         if(err) throw err;
+        //render the departments table
+        console.log("\n");
         console.table(res);
-        //console.log(res);
-        userMainMenu();
-        
+        console.log("\n");
+        //display the main user prompt menu
+        userMainMenu();        
 
     }); 
 }
@@ -406,14 +453,17 @@ const viewRoles= () => {
     //const search = `SELECT * FROM department`;
     db.query('SELECT * FROM roles', function (err, res) {
         if(err) throw err;
+        //render the Departments table 
+        console.log("\n");
         console.table(res);
+        console.log("\n");
+        //display the main user prompt menu
         userMainMenu();
 
     });
 }
 
 const viewStaff = () => {
-
     //const search = `SELECT * FROM department`;
 
     const search = ` SELECT employees.id, employees.first_name, employees.last_name, roles.title, department.names AS department,  roles.salary, 
@@ -427,9 +477,13 @@ const viewStaff = () => {
     //select employees.firstname + ' ' + employees.lastname AS managername 
     db.query(search, function (err, res) {
         if(err) throw err;
-        console.table(res);
-        userMainMenu();
 
+        //render the employees view table (id, firstname , last name, title, department, salary and manager)
+        console.log("\n");
+        console.table(res);
+        console.log("\n");
+        //display the main user prompt menu
+        userMainMenu();
     });
 }
 

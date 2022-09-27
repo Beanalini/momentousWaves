@@ -58,32 +58,29 @@ VALUES
 
 INSERT INTO employees (first_name, last_name, role_id, manager_id)
 VALUES
-("Sarah", "Swift",1,Null),
+("Sarah", "Swift",1,null),
 ("Paul","Smith",2,1),
 ("Ruxandra","Enache",3,1),
 ("Emil","cassidy",4,1),
 ("Bin", "Liu", 5, 1),
-("David","Granger",8,Null),
+("David","Granger",8,null),
 ("Ian","Jones",10,2),
 ("Sophia","Paine",12,2),
-("Alaister","Ruddle",13,Null),
+("Alaister","Ruddle",13,null),
 ("Richard","Young",15,9),
 ("Claire","Briggs",15,9),
 ("Chris","Ball",16,9),
-("Bev","Hall",17,Null),
+("Bev","Hall",17,null),
 ("Tahir","Majid",18,13),
 ("Ita","Jones",19,13),
-("Gwyn","Davis",21,Null),
+("Gwyn","Davis",21,null),
 ("Bob","Down",22,16),
-("Jim","Morrison",25,Null),
+("Jim","Morrison",25,null),
 ("Mia","Brown",26,18),
 ("Saun","Grant",27,18),
-("Tommy","Gomez",28,Null),
+("Tommy","Gomez",28,null),
 ("Nicola","Cordova",29,21),
 ("Arthur","Mint",30,21),
-("Joslin", "carsten", 31, Null),
-("Huan", "Lortz", 32, 31),
-("Pradeep", "Makrucki", 33, 31);
-
-ALTER TABLE  employees ADD manager_name VARCHAR(50)
-UPDATE employees SET employees.manager_name = CONCAT(employees.first_name +  employees.last_name);
+("Joslin", "carsten", 31, null),
+("Huan", "Lortz", 32, 24),
+("Pradeep", "Makrucki", 33, 24);
